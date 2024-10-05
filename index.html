@@ -64,7 +64,7 @@
         </div>
         <div class="form-group">
             <label for="valueB">Interest rate:</label>
-            <input type="number" id="valueB" placeholder="Enter interest rate" value="1.2">
+            <input type="number" id="valueB" placeholder="Interest rate" value="1.2" readonly>
         </div>
         <div class="form-group">
             <label for="valueC">Approximate weight (gram):</label>
@@ -84,23 +84,35 @@
         </div>
     </div>
     <script>
+        function calculateInterestRate(price) {
+            if (price > 100) {
+                return 1.2;
+            } else {
+                return 1.2 + (1.5 - 1.2) * (1 - (price / 100));
+            }
+        }
+
         function calculate() {
             let a = parseFloat(document.getElementById('valueA').value);
-            let b = parseFloat(document.getElementById('valueB').value);
             let c = parseFloat(document.getElementById('valueC').value);
             let d = parseFloat(document.getElementById('valueD').value);
             let e = parseFloat(document.getElementById('valueE').value);
 
-            if (isNaN(a) || isNaN(b) || isNaN(c) || isNaN(d) || isNaN(e)) {
+            if (isNaN(a) || isNaN(c) || isNaN(d) || isNaN(e)) {
                 document.getElementById('result').value = 'Please enter valid numbers';
                 return;
             }
+
+            // Automatically set interest rate based on the product price
+            let b = calculateInterestRate(a);
+            document.getElementById('valueB').value = b;
 
             let result = (a * 1.13 * b + c * d / 1000) * e;
             let roundedResult = Math.round(result / 10000) * 10000;
             document.getElementById('result').value = roundedResult;
         }
 
+        // Automatically recalculate when inputs change
         document.querySelectorAll('input[type="number"]').forEach(input => {
             input.addEventListener('input', calculate);
         });
